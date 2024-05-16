@@ -16,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -191,7 +193,9 @@ public class Pegawai extends javax.swing.JFrame {
         jT_kota.setText("");
         jT_kota_lahir.setText("");
         jT_nama.setText("");
-    };
+    }
+
+    ;
     private void SimpanPegawai() {
         int simpan = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Menyimpan Data Ini?", "save", JOptionPane.YES_NO_OPTION);
         if (simpan == 0) {
@@ -221,7 +225,7 @@ public class Pegawai extends javax.swing.JFrame {
             try {
                 rs = st.executeQuery("SELECT id from ref_gender where Gender='" + JK + "'");
                 if (rs.next()) {
-                    Jenis_Kelamin = rs.getByte(1);
+                    Jenis_Kelamin = rs.getInt(1);
                 }
                 rs = st.executeQuery("SELECT id_jabatan from ref_jabatan where nama_jabatan='" + JB + "'");
                 if (rs.next()) {
@@ -229,15 +233,15 @@ public class Pegawai extends javax.swing.JFrame {
                 }
                 rs = st.executeQuery("SELECT id from ref_agama where Agama='" + A + "'");
                 if (rs.next()) {
-                    Agama = rs.getByte(1);
+                    Agama = rs.getInt(1);
                 }
                 rs = st.executeQuery("SELECT id from ref_goldarah where Golongan_Darah='" + GD + "'");
                 if (rs.next()) {
-                    Golongan_Darah = rs.getByte(1);
+                    Golongan_Darah = rs.getInt(1);
                 }
                 rs = st.executeQuery("SELECT id from ref_statkawin where Stat_Kawin='" + SK + "'");
                 if (rs.next()) {
-                    Status = rs.getByte(1);
+                    Status = rs.getInt(1);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -262,12 +266,11 @@ public class Pegawai extends javax.swing.JFrame {
                         + "'" + Status + "',"
                         + "'" + Created_At + "',"
                         + "'" + Created_By + "')";
-                System.out.print(Jenis_Kelamin);
                 st = kon.createStatement();
                 st.executeUpdate(query);
                 IdPegawai();
                 BatalPegawai();
-//            DataJabatan();
+                DataPegawai();
                 JOptionPane.showMessageDialog(null, "DATA BERHASIL DISIMPAN");
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, "DATA GAGAL DISIMPAN, SILAHKAN MASUKKAN KEMBALI DATA DENGAN BENAR");
@@ -355,11 +358,11 @@ public class Pegawai extends javax.swing.JFrame {
             rs = st.executeQuery("SELECT * FROM profil_pegawai");
             while (rs.next()) {
                 try {
-                    Jenis_Kelamin = rs.getByte(3);
+                    Jenis_Kelamin = rs.getInt(3);
                     Jabatan = rs.getString(12);
-                    Agama = rs.getByte(13);
-                    Golongan_Darah = rs.getByte(14);
-                    Status = rs.getByte(15);
+                    Agama = rs.getInt(13);
+                    Golongan_Darah = rs.getInt(14);
+                    Status = rs.getInt(15);
                     rst = st.executeQuery("SELECT Gender from ref_gender where id='" + Jenis_Kelamin + "'");
                     if (rst.next()) {
                         JK = rst.getString(1);
@@ -383,11 +386,6 @@ public class Pegawai extends javax.swing.JFrame {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                System.out.print(JK);
-                System.out.print(JB);
-                System.out.print(A);
-                System.out.print(GD);
-                System.out.print(SK);
 
                 rs = st.executeQuery("SELECT * FROM profil_pegawai");
                 if (rs.next()) {
@@ -416,7 +414,7 @@ public class Pegawai extends javax.swing.JFrame {
                     "Gagal Tampil \n" + e.getMessage());
         }
     }
-    
+
     private void HapusPegawai() {
         DefaultTableModel model = (DefaultTableModel) jTb_pegawai.getModel();
         int row = jTb_pegawai.getSelectedRow();
@@ -444,9 +442,9 @@ public class Pegawai extends javax.swing.JFrame {
 
     private void TabelPegawaiSelect() {
         try {
-
             BatalPegawai();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern();
             int baris = jTb_pegawai.getSelectedRow();
 
             Id_Pegawai = jTb_pegawai.getValueAt(baris, 0).toString();
@@ -454,12 +452,18 @@ public class Pegawai extends javax.swing.JFrame {
             JK = jTb_pegawai.getValueAt(baris, 2).toString();
             if (JK.equals("Laki-Laki")) {
                 jR_1.setSelected(true);
-                System.out.print(1);
             } else {
                 jR_2.setSelected(true);
             }
-//            Tempat_lahir = String.valueOf(jT_kota_lahir.getText());
-//            Tanggal_lahir = fd.format(jD_tgl_lahir.getDate());
+            Pattern pattern = Pattern.compile("^([a-zA-Z]+), ([0-9-]+)");
+            Matcher m = pattern.matcher(jTb_pegawai.getValueAt(baris, 3).toString());
+            if (m.find()) {
+                Tempat_lahir = m.group(1);
+                Tanggal_lahir = m.group(2);
+                Date TL = (Date) formatter.parse(Tanggal_lahir);
+                System.out.print(TL);
+                jD_tgl_lahir.setDate(TL);
+            }
             Alamat = jTb_pegawai.getValueAt(baris, 4).toString();
             Kelurahan = jTb_pegawai.getValueAt(baris, 5).toString();
             Kecamatan = jTb_pegawai.getValueAt(baris, 6).toString();
@@ -470,34 +474,24 @@ public class Pegawai extends javax.swing.JFrame {
             A = jTb_pegawai.getValueAt(baris, 11).toString();
             GD = jTb_pegawai.getValueAt(baris, 12).toString();
             SK = jTb_pegawai.getValueAt(baris, 13).toString();
-
             jC_agama.setSelectedItem(A);
             jC_goldarah.setSelectedItem(GD);
             jC_jabatan.setSelectedItem(JB);
             jC_status.setSelectedItem(SK);
-//            jD_tgl_lahir.setCalendar(null);
+            jT_kota_lahir.setText(Tempat_lahir);
             jF_email.setText(Email);
             jF_telp.setText(No_Hp);
-
             jT_alamat.setText(Alamat);
             jT_id.setText(Id_Pegawai);
             jT_kec.setText(Kecamatan);
             jT_kel.setText(Kelurahan);
             jT_kota.setText(Kota);
-//            jT_kota_lahir.setText("");
             jT_nama.setText(Nama);
-
-//            jT_id.setText(id_jabatan);
-//            String nama_jabatan = jTb_jabatan.getValueAt(baris, 1).toString();
-//            jT_jabatan.setText(nama_jabatan);
-//            Date tglAwal = (Date) jTb_jabatan.getValueAt(baris, 2);
-//            jD_awal.setDate(tglAwal);
-//            Date tglAkhir = (Date) jTb_jabatan.getValueAt(baris, 3);
-//            jD_akhir.setDate(tglAkhir);
         } catch (Exception e) {
             System.out.println(e);
         }
     }
+
     private void Kembali() {
         int close = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Kembali?", "select", JOptionPane.YES_NO_OPTION);
         if (close == 0) {
@@ -516,6 +510,7 @@ public class Pegawai extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         jT_nama = new javax.swing.JTextField();
         jT_kota_lahir = new javax.swing.JTextField();
@@ -575,8 +570,10 @@ public class Pegawai extends javax.swing.JFrame {
 
         jC_status.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Pilih--" }));
 
+        buttonGroup1.add(jR_1);
         jR_1.setText("Laki-Laki");
 
+        buttonGroup1.add(jR_2);
         jR_2.setText("Perempuan");
 
         jLabel2.setText("Nama Lengkap");
@@ -907,6 +904,7 @@ public class Pegawai extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jB_batal;
     private javax.swing.JButton jB_hapus;
     private javax.swing.JButton jB_kembali;
