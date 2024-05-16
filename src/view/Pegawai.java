@@ -5,11 +5,14 @@
 package view;
 
 import connection.koneksi;
+import data.Users;
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,9 +28,9 @@ public class Pegawai extends javax.swing.JFrame {
 
     private final Connection kon = new koneksi().connect();
     private Statement st;
-    private ResultSet rs;
+    private ResultSet rs, rst;
     private String query = "";
-    private String Id_Pegawai, Nama, JK, Tempat_lahir, Tanggal_lahir, Alamat, Kelurahan, Kecamatan, Kota, Email, No_Hp, JB, Jabatan, A, GD, SK, Created_At, Created_By;
+    private String Id_Pegawai, Nama, JK, Tempat_lahir, Tanggal_lahir, Alamat, Kelurahan, Kecamatan, Kota, Email, No_Hp, JB, Jabatan, A, GD, SK, Created_At, Created_By, Updated_At, Updated_By;
     private int Jenis_Kelamin, Agama, Golongan_Darah, Status;
 
     /**
@@ -155,10 +158,10 @@ public class Pegawai extends javax.swing.JFrame {
 
     private void LebarKolom() {
         TableColumn column;
-        jTb_pegawai.getColumnModel().getColumn(0).setPreferredWidth(70);
-        jTb_pegawai.getColumnModel().getColumn(1).setPreferredWidth(70);
+        jTb_pegawai.getColumnModel().getColumn(0).setPreferredWidth(100);
         jTb_pegawai.getColumnModel().getColumn(2).setPreferredWidth(70);
         jTb_pegawai.getColumnModel().getColumn(3).setPreferredWidth(70);
+        jTb_pegawai.getColumnModel().getColumn(1).setPreferredWidth(70);
         jTb_pegawai.getColumnModel().getColumn(4).setPreferredWidth(70);
         jTb_pegawai.getColumnModel().getColumn(5).setPreferredWidth(70);
         jTb_pegawai.getColumnModel().getColumn(6).setPreferredWidth(70);
@@ -172,6 +175,7 @@ public class Pegawai extends javax.swing.JFrame {
     }
 
     private void BatalPegawai() {
+        IdPegawai();
         jC_agama.setSelectedIndex(0);
         jC_goldarah.setSelectedIndex(0);
         jC_jabatan.setSelectedIndex(0);
@@ -182,16 +186,13 @@ public class Pegawai extends javax.swing.JFrame {
         jR_1.setSelected(false);
         jR_2.setSelected(false);
         jT_alamat.setText("");
-        jT_id.setText("");
         jT_kec.setText("");
         jT_kel.setText("");
         jT_kota.setText("");
         jT_kota_lahir.setText("");
         jT_nama.setText("");
-    }
-
-    ;
-    private void SimpanJabatan() {
+    };
+    private void SimpanPegawai() {
         int simpan = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Menyimpan Data Ini?", "save", JOptionPane.YES_NO_OPTION);
         if (simpan == 0) {
             SimpleDateFormat fd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -276,50 +277,233 @@ public class Pegawai extends javax.swing.JFrame {
         }
     }
 
+    private void UbahPegawai() {
+        int edit = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Mengubah Data Ini?", "edit", JOptionPane.YES_NO_OPTION);
+        if (edit == 0) {
+            SimpleDateFormat fd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            Id_Pegawai = String.valueOf(jT_id.getText());
+            Nama = String.valueOf(jT_nama.getText());
+            if (jR_1.isSelected()) {
+                JK = String.valueOf(jR_1.getText());
+            } else {
+                JK = String.valueOf(jR_2.getText());
+            }
+            Tempat_lahir = String.valueOf(jT_kota_lahir.getText());
+            Tanggal_lahir = fd.format(jD_tgl_lahir.getDate());
+            Alamat = String.valueOf(jT_alamat.getText());
+            Kelurahan = String.valueOf(jT_kel.getText());
+            Kecamatan = String.valueOf(jT_kec.getText());
+            Kota = String.valueOf(jT_kota.getText());
+            Email = String.valueOf(jF_email.getText());
+            No_Hp = String.valueOf(jF_telp.getText());
+            JB = String.valueOf(jC_jabatan.getSelectedItem());
+            A = String.valueOf(jC_agama.getSelectedItem());
+            GD = String.valueOf(jC_goldarah.getSelectedItem());
+            SK = String.valueOf(jC_status.getSelectedItem());
+            Updated_At = String.valueOf(fd.format(new Date()));
+            Updated_By = String.valueOf(jT_id.getText());
+
+            try {
+                query = "UPDATE profil_pegawai SET "
+                        + "Nama ='" + Nama + "', "
+                        + "Jenis_Kelamin='" + Jenis_Kelamin + "', "
+                        + "Tempat_lahir ='" + Tempat_lahir + "', "
+                        + "Tanggal_lahir='" + Tanggal_lahir + "', "
+                        + "Alamat='" + Alamat + "', "
+                        + "Kelurahan='" + Kelurahan + "', "
+                        + "Kecamatan ='" + Kecamatan + "', "
+                        + "kota='" + Kota + "', "
+                        + "Email ='" + Email + "', "
+                        + "No_Hp='" + No_Hp + "', "
+                        + "Jabatan ='" + Jabatan + "', "
+                        + "Agama='" + Agama + "', "
+                        + "Golongan_Darah ='" + Golongan_Darah + "', "
+                        + "Status='" + Status + "', "
+                        + "Updated_At='" + Updated_At + "', "
+                        + "Updated_By='" + Updated_By + "' "
+                        + "WHERE Id_Pegawai = '" + Id_Pegawai + "'";
+                st = kon.createStatement();
+                st.execute(query);
+                BatalPegawai();
+                DataPegawai();
+                JOptionPane.showMessageDialog(null, "DATA BERHASIL DIUBAH");
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "DATA GAGAL DIUBAH, SILAHKAN UBAH DATA DENGAN BENAR \n " + e.getMessage());
+            }
+            jT_nama.requestFocus();
+        }
+    }
+
     public void DataPegawai() {
         DefaultTableModel datapegawai = new DefaultTableModel();
-        datapegawai.addColumn("ID Pegawai");
-        datapegawai.addColumn("Nama Lengka");
-        datapegawai.addColumn("Gender");
-        datapegawai.addColumn("Tempat, Tanggal Lahir");
-        datapegawai.addColumn("Alamat");
-        datapegawai.addColumn("Kelurahan");
-        datapegawai.addColumn("Kecamatan");
-        datapegawai.addColumn("Kota");
-        datapegawai.addColumn("Email");
-        datapegawai.addColumn("No. Telp");
-        datapegawai.addColumn("Jabatan");
-        datapegawai.addColumn("Agama");
-        datapegawai.addColumn("Golongan Darah");
-        datapegawai.addColumn("Status Pernikahan");
-
+        datapegawai.addColumn("ID Pegawai"); //1
+        datapegawai.addColumn("Nama Lengka"); //2
+        datapegawai.addColumn("Gender"); //3
+        datapegawai.addColumn("Tempat, Tanggal Lahir"); //4,5
+        datapegawai.addColumn("Alamat"); //6
+        datapegawai.addColumn("Kelurahan"); //7
+        datapegawai.addColumn("Kecamatan"); //8
+        datapegawai.addColumn("Kota"); //9
+        datapegawai.addColumn("Email"); //10
+        datapegawai.addColumn("No. Telp"); //11
+        datapegawai.addColumn("Jabatan"); //12
+        datapegawai.addColumn("Agama"); //13
+        datapegawai.addColumn("Golongan Darah"); //14
+        datapegawai.addColumn("Status Pernikahan"); //15
         try {
             st = kon.createStatement();
             rs = st.executeQuery("SELECT * FROM profil_pegawai");
             while (rs.next()) {
-                datapegawai.addRow(new Object[]{
-                    rs.getString(1),
-                    rs.getString(2),
-                    rs.getByte(3),
-                    rs.getString(4),
-                    rs.getDate(5),
-                    rs.getString(6),
-                    rs.getString(7),
-                    rs.getString(8),
-                    rs.getString(9),
-                    rs.getString(10),
-                    rs.getString(11),
-                    rs.getString(12),
-                    rs.getByte(13),
-                    rs.getByte(14),
-                    rs.getByte(15)
-                });
+                try {
+                    Jenis_Kelamin = rs.getByte(3);
+                    Jabatan = rs.getString(12);
+                    Agama = rs.getByte(13);
+                    Golongan_Darah = rs.getByte(14);
+                    Status = rs.getByte(15);
+                    rst = st.executeQuery("SELECT Gender from ref_gender where id='" + Jenis_Kelamin + "'");
+                    if (rst.next()) {
+                        JK = rst.getString(1);
+                    }
+                    rst = st.executeQuery("SELECT nama_jabatan from ref_jabatan where id_jabatan='" + Jabatan + "'");
+                    if (rst.next()) {
+                        JB = rst.getString(1);
+                    }
+                    rst = st.executeQuery("SELECT Agama from ref_agama where id='" + Agama + "'");
+                    if (rst.next()) {
+                        A = rst.getString(1);
+                    }
+                    rst = st.executeQuery("SELECT Golongan_Darah from ref_goldarah where id='" + Golongan_Darah + "'");
+                    if (rst.next()) {
+                        GD = rst.getString(1);
+                    }
+                    rst = st.executeQuery("SELECT Stat_Kawin from ref_statkawin where id='" + Status + "'");
+                    if (rst.next()) {
+                        SK = rst.getString(1);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                System.out.print(JK);
+                System.out.print(JB);
+                System.out.print(A);
+                System.out.print(GD);
+                System.out.print(SK);
+
+                rs = st.executeQuery("SELECT * FROM profil_pegawai");
+                if (rs.next()) {
+                    datapegawai.addRow(new Object[]{
+                        rs.getString(1),
+                        rs.getString(2),
+                        JK,
+                        rs.getString(4) + ", " + rs.getDate(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getString(9),
+                        rs.getString(10),
+                        rs.getString(11),
+                        JB,
+                        A,
+                        GD,
+                        SK
+                    });
+                }
             }
             jTb_pegawai.setModel(datapegawai);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "Gagal Tampil \n" + e.getMessage());
+        }
+    }
+    
+    private void HapusPegawai() {
+        DefaultTableModel model = (DefaultTableModel) jTb_pegawai.getModel();
+        int row = jTb_pegawai.getSelectedRow();
+        if (row >= 0) {
+            int delete = JOptionPane.showConfirmDialog(null, "Apakah Yakin ingin menghapus data ini?", "delete", JOptionPane.YES_NO_OPTION);
+            if (delete == 0) {
+                model.removeRow(row);
+                try {
+
+                    query = "DELETE FROM profil_pegawai WHERE id_pegawai ='" + jT_id.getText() + "'";
+                    st = kon.createStatement();
+                    st.execute(query);
+                    JOptionPane.showMessageDialog(null, "DATA BERHASIL DIHAPUS");
+                    BatalPegawai();
+                    DataPegawai();
+                } catch (SQLException | HeadlessException e) {
+                    JOptionPane.showMessageDialog(null, "DATA GAGAL DIHAPUS, SILAHKAN COBA KEMBALI \n" + e.getMessage());
+                }
+                jT_nama.requestFocus();
+            }
+        }
+    }
+
+    ;
+
+    private void TabelPegawaiSelect() {
+        try {
+
+            BatalPegawai();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            int baris = jTb_pegawai.getSelectedRow();
+
+            Id_Pegawai = jTb_pegawai.getValueAt(baris, 0).toString();
+            Nama = jTb_pegawai.getValueAt(baris, 1).toString();
+            JK = jTb_pegawai.getValueAt(baris, 2).toString();
+            if (JK.equals("Laki-Laki")) {
+                jR_1.setSelected(true);
+                System.out.print(1);
+            } else {
+                jR_2.setSelected(true);
+            }
+//            Tempat_lahir = String.valueOf(jT_kota_lahir.getText());
+//            Tanggal_lahir = fd.format(jD_tgl_lahir.getDate());
+            Alamat = jTb_pegawai.getValueAt(baris, 4).toString();
+            Kelurahan = jTb_pegawai.getValueAt(baris, 5).toString();
+            Kecamatan = jTb_pegawai.getValueAt(baris, 6).toString();
+            Kota = jTb_pegawai.getValueAt(baris, 7).toString();
+            Email = jTb_pegawai.getValueAt(baris, 8).toString();
+            No_Hp = jTb_pegawai.getValueAt(baris, 9).toString();
+            JB = jTb_pegawai.getValueAt(baris, 10).toString();
+            A = jTb_pegawai.getValueAt(baris, 11).toString();
+            GD = jTb_pegawai.getValueAt(baris, 12).toString();
+            SK = jTb_pegawai.getValueAt(baris, 13).toString();
+
+            jC_agama.setSelectedItem(A);
+            jC_goldarah.setSelectedItem(GD);
+            jC_jabatan.setSelectedItem(JB);
+            jC_status.setSelectedItem(SK);
+//            jD_tgl_lahir.setCalendar(null);
+            jF_email.setText(Email);
+            jF_telp.setText(No_Hp);
+
+            jT_alamat.setText(Alamat);
+            jT_id.setText(Id_Pegawai);
+            jT_kec.setText(Kecamatan);
+            jT_kel.setText(Kelurahan);
+            jT_kota.setText(Kota);
+//            jT_kota_lahir.setText("");
+            jT_nama.setText(Nama);
+
+//            jT_id.setText(id_jabatan);
+//            String nama_jabatan = jTb_jabatan.getValueAt(baris, 1).toString();
+//            jT_jabatan.setText(nama_jabatan);
+//            Date tglAwal = (Date) jTb_jabatan.getValueAt(baris, 2);
+//            jD_awal.setDate(tglAwal);
+//            Date tglAkhir = (Date) jTb_jabatan.getValueAt(baris, 3);
+//            jD_akhir.setDate(tglAkhir);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    private void Kembali() {
+        int close = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Kembali?", "select", JOptionPane.YES_NO_OPTION);
+        if (close == 0) {
+            Users users = new Users(" ", " ", " ");
+            new Home(users).setVisible(true);
+            dispose();
         }
     }
 
@@ -363,7 +547,6 @@ public class Pegawai extends javax.swing.JFrame {
         jLabel14 = new javax.swing.JLabel();
         jF_telp = new javax.swing.JFormattedTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jPanel1 = new javax.swing.JPanel();
         jTb_pegawai = new javax.swing.JTable();
         jB_ubah = new javax.swing.JButton();
         jB_hapus = new javax.swing.JButton();
@@ -425,6 +608,16 @@ public class Pegawai extends javax.swing.JFrame {
         jLabel14.setText("Status "); // NOI18N
 
         jScrollPane2.setToolTipText("");
+        jScrollPane2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jScrollPane2MouseClicked(evt);
+            }
+        });
+        jScrollPane2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jScrollPane2KeyPressed(evt);
+            }
+        });
 
         jTb_pegawai.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -434,34 +627,33 @@ public class Pegawai extends javax.swing.JFrame {
                 "ID Pegawai", "Nama Lengkap", "Gender", "Tempat, Tanggal Lahir", "Alamat", "Kelurahan", "Kecamatan", "Kota", "Email", "No_HP", "Jabatan", "Agama", "Golongan Darah", "Status Pernikahan"
             }
         ));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1265, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jTb_pegawai, javax.swing.GroupLayout.DEFAULT_SIZE, 1253, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 516, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jTb_pegawai, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)))
-        );
-
-        jScrollPane2.setViewportView(jPanel1);
+        jTb_pegawai.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTb_pegawaiMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTb_pegawai);
 
         jB_ubah.setText("Ubah");
+        jB_ubah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_ubahActionPerformed(evt);
+            }
+        });
 
         jB_hapus.setText("Hapus");
+        jB_hapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_hapusActionPerformed(evt);
+            }
+        });
 
         jB_batal.setText("Batal");
+        jB_batal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_batalActionPerformed(evt);
+            }
+        });
 
         jB_kembali.setText("Kembali");
         jB_kembali.addActionListener(new java.awt.event.ActionListener() {
@@ -642,12 +834,42 @@ public class Pegawai extends javax.swing.JFrame {
 
     private void jB_kembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_kembaliActionPerformed
         // TODO add your handling code here:
+        Kembali();
     }//GEN-LAST:event_jB_kembaliActionPerformed
 
     private void jB_simpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_simpanActionPerformed
         // TODO add your handling code here:
-        SimpanJabatan();
+        SimpanPegawai();
     }//GEN-LAST:event_jB_simpanActionPerformed
+
+    private void jB_batalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_batalActionPerformed
+        // TODO add your handling code here:
+        BatalPegawai();
+    }//GEN-LAST:event_jB_batalActionPerformed
+
+    private void jScrollPane2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jScrollPane2KeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jScrollPane2KeyPressed
+
+    private void jScrollPane2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane2MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jScrollPane2MouseClicked
+
+    private void jTb_pegawaiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTb_pegawaiMouseClicked
+        // TODO add your handling code here:
+        TabelPegawaiSelect();
+
+    }//GEN-LAST:event_jTb_pegawaiMouseClicked
+
+    private void jB_ubahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_ubahActionPerformed
+        // TODO add your handling code here:
+        UbahPegawai();
+    }//GEN-LAST:event_jB_ubahActionPerformed
+
+    private void jB_hapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_hapusActionPerformed
+        // TODO add your handling code here:
+        HapusPegawai();
+    }//GEN-LAST:event_jB_hapusActionPerformed
 
     /**
      * @param args the command line arguments
@@ -713,7 +935,6 @@ public class Pegawai extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JRadioButton jR_1;
     private javax.swing.JRadioButton jR_2;
     private javax.swing.JScrollPane jScrollPane1;

@@ -22,9 +22,9 @@ public class koneksi {
        } catch (ClassNotFoundException e) {
            System.out.println("DRIVER TIDAK DITEMUKAN" +e);
        }
-       String url = "jdbc:mysql://localhost:3306/app_pegawai";
+       String url = "jdbc:mysql://34.101.223.69:3306/app_pegawai";
        try {
-           kon = DriverManager.getConnection(url, "root", "");
+           kon = DriverManager.getConnection(url, "root", "migrasi@2023");
            System.out.println("KONEKSI DATABASE BERHASIL");
        } catch (SQLException e) {
            System.out.println("KONEKSI DATABASE GAGAL" +e);
