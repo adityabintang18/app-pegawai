@@ -4,8 +4,8 @@
  */
 package kepegawaian;
 
-import view.Login;
-import view.Regis;
+import view.admin.Login;
+import view.admin.Regis;
 
 /**
  *

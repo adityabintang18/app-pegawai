@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package view;
+package view.admin;
 
 import connection.koneksi;
 import data.Users;
@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
+import view.user.U_Absensi;
 
 /**
  *
@@ -21,6 +22,7 @@ public class Login extends javax.swing.JFrame {
     private Statement st;
     public ResultSet rslogin;
     private String user, pass, name;
+    private int role;
     private String query = "";
 
     /**
@@ -49,12 +51,27 @@ public class Login extends javax.swing.JFrame {
                 rslogin = st.executeQuery(query);
 
                 if (rslogin.next()) {
-                    name = rslogin.getString("name");
-                    Users users = new Users(user, pass, name);
-                    Home home = new Home(users);
-                    JOptionPane.showMessageDialog(null, "Login Berhasil \nSelamat Datang \t" + name);
-                    home.setVisible(true);
-                    dispose();
+                    role = rslogin.getInt("role");
+                    if (role == 1) {
+                        name = rslogin.getString("name");
+                        Users users = new Users(user, pass, name);
+                        Home home = new Home(users);
+                        JOptionPane.showMessageDialog(null, "Login Berhasil \nSelamat Datang \t" + name);
+                        home.setVisible(true);
+                        dispose();
+                    } else if (role == 2) {
+                        name = rslogin.getString("name");
+                        Users users = new Users(user, pass, name);
+                        U_Absensi absensi = new U_Absensi(users);
+                        JOptionPane.showMessageDialog(null, "Login Berhasil \nSelamat Datang \t" + name);
+                        absensi.setVisible(true);
+                        dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Login Gagal \nUsername \t" + user + " tidak memiliki Role");
+                        jT_user.setText("");
+                        jP_pass.setText("");
+                    }
+
                 } else {
                     JOptionPane.showMessageDialog(null, "Username Atau Password Salah");
                     jT_user.setText("");
