@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
 import view.user.U_Absensi;
+import view.user.U_Home;
 
 /**
  *
@@ -62,9 +63,9 @@ public class Login extends javax.swing.JFrame {
                     } else if (role == 2) {
                         name = rslogin.getString("name");
                         Users users = new Users(user, pass, name);
-                        U_Absensi absensi = new U_Absensi(users);
+                        U_Home home = new U_Home(users);
                         JOptionPane.showMessageDialog(null, "Login Berhasil \nSelamat Datang \t" + name);
-                        absensi.setVisible(true);
+                        home.setVisible(true);
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, "Login Gagal \nUsername \t" + user + " tidak memiliki Role");
@@ -163,13 +164,14 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(jL_judul1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jL_judul2, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jL_pass, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jT_user, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jL_user, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jP_pass, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jP_pass)
+                            .addComponent(jT_user, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jC_pass, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -196,6 +198,7 @@ public class Login extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jT_userActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jT_userActionPerformed

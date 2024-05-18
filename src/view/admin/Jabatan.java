@@ -412,6 +412,7 @@ public class Jabatan extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jT_jabatanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jT_jabatanActionPerformed

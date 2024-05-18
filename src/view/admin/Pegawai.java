@@ -827,6 +827,7 @@ public class Pegawai extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jB_kembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_kembaliActionPerformed

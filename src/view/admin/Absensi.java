@@ -4,17 +4,86 @@
  */
 package view.admin;
 
+import connection.koneksi;
+import data.Users;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author adity
  */
 public class Absensi extends javax.swing.JFrame {
+    
+    private final Connection kon = new koneksi().connect();
+    private Statement st;
+    private ResultSet rs;
+    private String query = "";
+    private String Username, Id_Pegawai, Nama, Tgl, Jam_Masuk, Jam_Pulang, masuk, pulang;
 
     /**
      * Creates new form Absensi
      */
     public Absensi() {
         initComponents();
+        DataAbsensi();
+    }
+    
+    
+    public void DataAbsensi() {
+        DefaultTableModel dataabsensi = new DefaultTableModel();
+        dataabsensi.addColumn("ID Pegawai"); //1
+        dataabsensi.addColumn("Tanggal"); //2
+        dataabsensi.addColumn("Jam Masuk"); //3
+        dataabsensi.addColumn("Jam Pulang"); //4
+        
+        SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            st = kon.createStatement();
+            rs = st.executeQuery("SELECT * FROM absensi");
+            while (rs.next()) {
+                if (rs.getTime(4) != null) {
+                    masuk = String.valueOf(rs.getTime(4));
+
+                } else {
+                    masuk = "Tidak Ada";
+                }
+                if (rs.getTime(5) != null) {
+                    pulang = String.valueOf(rs.getTime(5));
+
+                } else {
+                    pulang = "Tidak Ada";
+                }
+                dataabsensi.addRow(new Object[]{
+                    rs.getString(2),
+                    rs.getDate(3),
+                    //                    masuk,
+                    rs.getTime(4),
+                    pulang
+                }
+                );
+            }
+            jTb_absensi.setModel(dataabsensi);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                    "Gagal Tampil \n" + e.getMessage());
+        }
+    }
+    
+    private void Kembali() {
+        int close = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Kembali?", "select", JOptionPane.YES_NO_OPTION);
+        if (close == 0) {
+            Users users = new Users(" ", " ", " ");
+            new Home(users).setVisible(true);
+            dispose();
+        }
     }
 
     /**
@@ -27,30 +96,66 @@ public class Absensi extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTb_absensi = new javax.swing.JTable();
+        jB_kembali = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Absensi Pegawai");
+        jLabel1.setText("Data Absensi Pegawai");
+
+        jTb_absensi.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID Pegawai", "Tanggal", "Jam Masuk", "Jam Pulang"
+            }
+        ));
+        jScrollPane1.setViewportView(jTb_absensi);
+
+        jB_kembali.setText("Kembali");
+        jB_kembali.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_kembaliActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(148, 148, 148)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(148, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jB_kembali))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
+                            .addComponent(jLabel1))))
+                .addGap(26, 26, 26))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(121, 121, 121)
+                .addGap(27, 27, 27)
                 .addComponent(jLabel1)
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addGap(20, 20, 20)
+                .addComponent(jB_kembali)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+                .addGap(22, 22, 22))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jB_kembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_kembaliActionPerformed
+        // TODO add your handling code here:
+        Kembali();
+    }//GEN-LAST:event_jB_kembaliActionPerformed
 
     /**
      * @param args the command line arguments
@@ -88,6 +193,11 @@ public class Absensi extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jB_kembali;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTb_absensi;
     // End of variables declaration//GEN-END:variables
+
+    
 }

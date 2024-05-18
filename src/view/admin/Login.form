@@ -6,7 +6,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
-    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="true"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -34,15 +34,17 @@
                   <Component id="jL_judul1" min="-2" pref="110" max="-2" attributes="0"/>
                   <Component id="jL_judul2" min="-2" pref="142" max="-2" attributes="0"/>
                   <Component id="jL_pass" alignment="0" min="-2" pref="66" max="-2" attributes="0"/>
-                  <Component id="jT_user" alignment="0" min="-2" pref="225" max="-2" attributes="0"/>
                   <Component id="jL_user" min="-2" pref="64" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jP_pass" min="-2" pref="195" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="jP_pass" max="32767" attributes="0"/>
+                          <Component id="jT_user" alignment="1" pref="225" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jC_pass" min="-2" pref="85" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="72" max="32767" attributes="0"/>
+              <EmptySpace pref="54" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

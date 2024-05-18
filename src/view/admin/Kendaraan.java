@@ -597,6 +597,7 @@ public class Kendaraan extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jT_WarnaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jT_WarnaActionPerformed

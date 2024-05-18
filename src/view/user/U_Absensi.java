@@ -100,12 +100,12 @@ public class U_Absensi extends javax.swing.JFrame {
                 st = kon.createStatement();
                 st.executeUpdate(query);
                 JOptionPane.showMessageDialog(null, "ABSENSI MASUK BERHASIL");
+                DataAbsensi();
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, "ABSENSI GAGAL DISIMPAN, SILAHKAN MASUKKAN KEMBALI DATA DENGAN BENAR");
                 e.printStackTrace();
             }
         }
-        DataAbsensi();
     }
 
     private void AbsenPulang(Users users) {
@@ -145,13 +145,13 @@ public class U_Absensi extends javax.swing.JFrame {
                         + "jam_masuk = '" + Jam_Masuk + "'";
                 st = kon.createStatement();
                 st.executeUpdate(query);
-                JOptionPane.showMessageDialog(null, "ABSENSI MASUK BERHASIL");
+                JOptionPane.showMessageDialog(null, "ABSENSI PULANG BERHASIL");
+                DataAbsensi();
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, "ABSENSI GAGAL DISIMPAN, SILAHKAN MASUKKAN KEMBALI DATA DENGAN BENAR");
                 e.printStackTrace();
             }
         }
-        DataAbsensi();
     }
 
     public void DataAbsensi() {
@@ -160,10 +160,12 @@ public class U_Absensi extends javax.swing.JFrame {
         dataabsensi.addColumn("Tanggal"); //2
         dataabsensi.addColumn("Jam Masuk"); //3
         dataabsensi.addColumn("Jam Pulang"); //4
+        
+        SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd");
 
         try {
             st = kon.createStatement();
-            rs = st.executeQuery("SELECT * FROM absensi");
+            rs = st.executeQuery("SELECT * FROM absensi where tanggal ='"+ t.format(new Date()) +"'");
             while (rs.next()) {
                 if (rs.getTime(4) != null) {
                     masuk = String.valueOf(rs.getTime(4));
@@ -215,6 +217,8 @@ public class U_Absensi extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jL_id = new javax.swing.JLabel();
         jL_nama = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -251,13 +255,17 @@ public class U_Absensi extends javax.swing.JFrame {
 
         jLabel4.setText("Daftar Absensi");
 
-        jLabel3.setText("ID Pegawai    : ");
+        jLabel3.setText("ID Pegawai  ");
 
-        jLabel5.setText("Nama            :");
+        jLabel5.setText("Nama");
 
         jL_id.setText("id");
 
         jL_nama.setText("nama");
+
+        jLabel6.setText(":");
+
+        jLabel7.setText(":");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -268,26 +276,31 @@ public class U_Absensi extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2)
-                            .addComponent(jL_waktu)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel4)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jB_masuk, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jB_keluar, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(278, 278, 278))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jB_masuk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jB_keluar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(280, 280, 280)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jL_waktu, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addGap(24, 24, 24))
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel5))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jL_id)
                             .addComponent(jL_nama))))
@@ -303,11 +316,13 @@ public class U_Absensi extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(jL_id))
+                            .addComponent(jL_id)
+                            .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
-                            .addComponent(jL_nama))
+                            .addComponent(jL_nama)
+                            .addComponent(jLabel7))
                         .addGap(34, 34, 34))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -315,9 +330,9 @@ public class U_Absensi extends javax.swing.JFrame {
                         .addComponent(jL_waktu)
                         .addGap(18, 18, 18)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jB_masuk)
-                    .addComponent(jB_keluar))
-                .addGap(18, 18, Short.MAX_VALUE)
+                    .addComponent(jB_masuk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jB_keluar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -397,6 +412,8 @@ public class U_Absensi extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTb_absen;
     // End of variables declaration//GEN-END:variables
