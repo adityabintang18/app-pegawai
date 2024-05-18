@@ -305,6 +305,31 @@ public class Pegawai extends javax.swing.JFrame {
             SK = String.valueOf(jC_status.getSelectedItem());
             Updated_At = String.valueOf(fd.format(new Date()));
             Updated_By = String.valueOf(jT_id.getText());
+            
+            try {
+                rs = st.executeQuery("SELECT id from ref_gender where Gender='" + JK + "'");
+                if (rs.next()) {
+                    Jenis_Kelamin = rs.getInt(1);
+                }
+                rs = st.executeQuery("SELECT id_jabatan from ref_jabatan where nama_jabatan='" + JB + "'");
+                if (rs.next()) {
+                    Jabatan = rs.getString(1);
+                }
+                rs = st.executeQuery("SELECT id from ref_agama where Agama='" + A + "'");
+                if (rs.next()) {
+                    Agama = rs.getInt(1);
+                }
+                rs = st.executeQuery("SELECT id from ref_goldarah where Golongan_Darah='" + GD + "'");
+                if (rs.next()) {
+                    Golongan_Darah = rs.getInt(1);
+                }
+                rs = st.executeQuery("SELECT id from ref_statkawin where Stat_Kawin='" + SK + "'");
+                if (rs.next()) {
+                    Status = rs.getInt(1);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             try {
                 query = "UPDATE profil_pegawai SET "

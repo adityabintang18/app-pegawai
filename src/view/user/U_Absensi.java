@@ -29,7 +29,7 @@ public class U_Absensi extends javax.swing.JFrame {
     private Statement st;
     private ResultSet rs;
     private String query = "";
-    private String Username, Id_Pegawai, Nama, Tgl, Jam_Masuk, Jam_Pulang, masuk, pulang;
+    private String Username, Id_Pegawai, Nama, Tgl, Jam_Masuk, Jam_Pulang, masuk, pulang, user, pass, name;
 
     /**
      * Creates new form Profile
@@ -41,6 +41,10 @@ public class U_Absensi extends javax.swing.JFrame {
     }
 
     private void updateData(Users users) {
+        user = users.getUsername();
+        pass = users.getPassword();
+        name = users.getName();
+
         Timer timer = new Timer(1000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Ambil waktu sekarang
@@ -60,6 +64,7 @@ public class U_Absensi extends javax.swing.JFrame {
             if (rs.next()) {
                 Id_Pegawai = rs.getString(1);
             }
+            System.out.print(users.getUsername());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -126,7 +131,7 @@ public class U_Absensi extends javax.swing.JFrame {
                     Id_Pegawai = rs.getString(1);
                 }
                 st = kon.createStatement();
-                rs = st.executeQuery("SELECT id_pegawai,tanggal, jam_masuk from absensi where id_pegawai='" + Id_Pegawai + "' and tanggal = '"+ Tgl+"'");
+                rs = st.executeQuery("SELECT id_pegawai,tanggal, jam_masuk from absensi where id_pegawai='" + Id_Pegawai + "' and tanggal = '" + Tgl + "'");
                 if (rs.next()) {
                     Id_Pegawai = rs.getString(1);
                     Tgl = rs.getString(2);
@@ -155,17 +160,18 @@ public class U_Absensi extends javax.swing.JFrame {
     }
 
     public void DataAbsensi() {
+
         DefaultTableModel dataabsensi = new DefaultTableModel();
         dataabsensi.addColumn("ID Pegawai"); //1
         dataabsensi.addColumn("Tanggal"); //2
         dataabsensi.addColumn("Jam Masuk"); //3
         dataabsensi.addColumn("Jam Pulang"); //4
-        
+
         SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd");
 
         try {
             st = kon.createStatement();
-            rs = st.executeQuery("SELECT * FROM absensi where tanggal ='"+ t.format(new Date()) +"'");
+            rs = st.executeQuery("SELECT * FROM absensi where tanggal ='" + t.format(new Date()) + "'");
             while (rs.next()) {
                 if (rs.getTime(4) != null) {
                     masuk = String.valueOf(rs.getTime(4));
@@ -182,7 +188,7 @@ public class U_Absensi extends javax.swing.JFrame {
                 dataabsensi.addRow(new Object[]{
                     rs.getString(2),
                     rs.getDate(3),
-                    //                    masuk,
+                    masuk,
                     rs.getTime(4),
                     pulang
                 }
@@ -193,6 +199,15 @@ public class U_Absensi extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "Gagal Tampil \n" + e.getMessage());
+        }
+    }
+    
+    private void Kembali() {
+        int close = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Kembali?", "select", JOptionPane.YES_NO_OPTION);
+        if (close == 0) {
+            Users users = new Users(" ", " ", " ");
+            new U_Home(users).setVisible(true);
+            dispose();
         }
     }
 
@@ -219,6 +234,7 @@ public class U_Absensi extends javax.swing.JFrame {
         jL_nama = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -267,27 +283,17 @@ public class U_Absensi extends javax.swing.JFrame {
 
         jLabel7.setText(":");
 
+        jButton1.setText("Kembali");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(278, 278, 278))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jB_masuk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jB_keluar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(280, 280, 280)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jL_waktu, javax.swing.GroupLayout.Alignment.TRAILING))))
-                .addGap(24, 24, 24))
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -305,6 +311,28 @@ public class U_Absensi extends javax.swing.JFrame {
                             .addComponent(jL_id)
                             .addComponent(jL_nama))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(278, 278, 278))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jB_masuk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jB_keluar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(280, 280, 280)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jL_waktu, javax.swing.GroupLayout.Alignment.TRAILING))))))
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -336,7 +364,9 @@ public class U_Absensi extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addGap(12, 12, 12))
         );
 
         pack();
@@ -344,15 +374,20 @@ public class U_Absensi extends javax.swing.JFrame {
 
     private void jB_masukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_masukActionPerformed
         // TODO add your handling code here:
-        Users users = new Users(" ", " ", " ");
+        Users users = new Users(user, pass, name);
         AbsenMasuk(users);
     }//GEN-LAST:event_jB_masukActionPerformed
 
     private void jB_keluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_keluarActionPerformed
         // TODO add your handling code here:
-        Users users = new Users(" ", " ", " ");
+        Users users = new Users(user, pass, name);
         AbsenPulang(users);
     }//GEN-LAST:event_jB_keluarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        Kembali();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -404,6 +439,7 @@ public class U_Absensi extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jB_keluar;
     private javax.swing.JButton jB_masuk;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jL_id;
     private javax.swing.JLabel jL_nama;
     private javax.swing.JLabel jL_waktu;

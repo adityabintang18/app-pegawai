@@ -4,6 +4,7 @@
  */
 package kepegawaian;
 
+import data.Users;
 import view.admin.Login;
 import view.admin.Regis;
 
@@ -18,8 +19,8 @@ public class Kepegawaian {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        
-        new Login().setVisible(true);
+        Users users = new Users(" ", " ", " ");
+        new Login(users).setVisible(true);
     }
     
 }
