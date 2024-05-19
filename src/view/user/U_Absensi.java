@@ -202,10 +202,9 @@ public class U_Absensi extends javax.swing.JFrame {
         }
     }
     
-    private void Kembali() {
+    private void Kembali(Users users) {
         int close = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Kembali?", "select", JOptionPane.YES_NO_OPTION);
         if (close == 0) {
-            Users users = new Users(" ", " ", " ");
             new U_Home(users).setVisible(true);
             dispose();
         }
@@ -386,7 +385,8 @@ public class U_Absensi extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        Kembali();
+        Users users = new Users(user, pass, name);
+        Kembali(users);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

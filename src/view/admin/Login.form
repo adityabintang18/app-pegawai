@@ -33,12 +33,12 @@
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jB_pass" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jL_judul1" min="-2" pref="110" max="-2" attributes="0"/>
-                          <Component id="jL_judul2" min="-2" pref="142" max="-2" attributes="0"/>
                           <Component id="jL_pass" alignment="0" min="-2" pref="66" max="-2" attributes="0"/>
                           <Component id="jL_user" min="-2" pref="64" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="jL_judul2" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jL_judul1" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jP_pass" pref="266" max="32767" attributes="0"/>
                                   <Component id="jT_user" max="32767" attributes="0"/>
                               </Group>

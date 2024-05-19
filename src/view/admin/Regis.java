@@ -4,17 +4,135 @@
  */
 package view.admin;
 
+import connection.koneksi;
+import data.Users;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author adity
  */
 public class Regis extends javax.swing.JFrame {
 
+    private final Connection kon = new koneksi().connect();
+    private Statement st;
+    private ResultSet rs, rst;
+    private String query = "";
+    private String Id_Pegawai, Pass, User, Nama;
+
     /**
      * Creates new form Regis
      */
     public Regis() {
         initComponents();
+        OptionPegawai();
+    }
+
+    public void OptionPegawai() {
+        try {
+            query = "SELECT * FROM profil_pegawai";
+            st = kon.createStatement();
+            rs = st.executeQuery(query);
+
+            List<String> items = new ArrayList<>();
+            while (rs.next()) {
+                items.add(rs.getString("id_pegawai")); // Ganti column_name dengan nama kolom yang sesuai
+            }
+
+            // Memasukkan data dari ArrayList ke dalam JComboBox
+            for (String item : items) {
+                jC_id.addItem(item);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+
+    }
+
+    private void GetName() {
+        try {
+            if (jC_id != null && jC_id.getItemCount() != 0) {
+                query = "SELECT * FROM profil_pegawai WHERE id_pegawai ='" + String.valueOf(jC_id.getSelectedItem()) + "'";
+                st = kon.createStatement();
+                rs = st.executeQuery(query);
+
+                if (rs.next()) {
+                    jT_nama.setText(rs.getString("nama"));
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Data pegawai tidak ditemukan, harap mengisi terlebih dahulu");
+
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+
+    }
+
+    private void cekpass() {
+        if (jC_pass.isSelected()) {
+            jP_pass.setEchoChar((char) 0);
+            jC_pass.setText("Hide");
+        } else {
+            jP_pass.setEchoChar('*');
+            jC_pass.setText("Show");
+        }
+        if (jC_pass2.isSelected()) {
+            jP_pass2.setEchoChar((char) 0);
+            jC_pass2.setText("Hide");
+        } else {
+            jP_pass2.setEchoChar('*');
+            jC_pass2.setText("Show");
+        }
+    }
+
+    private void Daftar() {
+        int simpan = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Menyimpan Data Ini?", "save", JOptionPane.YES_NO_OPTION);
+        if (simpan == 0) {
+            Id_Pegawai = String.valueOf(jC_id.getSelectedItem());
+            Nama = String.valueOf(jT_nama.getText());
+            User = String.valueOf(jT_user.getText());
+            if (jP_pass == jP_pass2) {
+                Pass = String.valueOf(jT_user.getText());
+                try {
+                    query = "INSERT INTO users (id_pegawai,username,name,password,`role`) VALUES "
+                            + "('" + Id_Pegawai + "',"
+                            + "'" + User + "',"
+                            + "'" + Nama + "',"
+                            + "'" + Pass + "',"
+                            + "1)";
+                    st = kon.createStatement();
+                    st.executeUpdate(query);
+                    JOptionPane.showMessageDialog(null, "USER BERHASIL DIDAFTARKAN");
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, "USER GAGAL DIDAFTARKAN, SILAHKAN MASUKKAN KEMBALI DATA DENGAN BENAR");
+                    e.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Password dengan Konfirmasi Password tidak sama!");
+            }
+
+//            Created_At = String.valueOf(fd.format(new Date()));
+//            Created_By = String.valueOf(jT_id.getText());
+            jC_id.requestFocus();
+        }
+    }
+
+    private void Kembali() {
+        int close = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Kembali?", "select", JOptionPane.YES_NO_OPTION);
+        if (close == 0) {
+            Users users = new Users(" ", " ", " ");
+            new Home(users).setVisible(true);
+            dispose();
+        }
     }
 
     /**
@@ -26,53 +144,187 @@ public class Regis extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jCheckBox1 = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        jT_nama = new javax.swing.JTextField();
+        jT_user = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jC_id = new javax.swing.JComboBox<>();
+        jP_pass = new javax.swing.JPasswordField();
+        jP_pass2 = new javax.swing.JPasswordField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jB_daftar = new javax.swing.JButton();
+        jB_kembali = new javax.swing.JButton();
+        jC_pass = new javax.swing.JCheckBox();
+        jC_pass2 = new javax.swing.JCheckBox();
+
+        jCheckBox1.setText("jCheckBox1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("REGUSTRASI USER");
+        jLabel1.setText("REGISTRASI USER");
 
-        jTextField1.setText("jTextField1");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jT_nama.setEditable(false);
+        jT_nama.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jT_namaActionPerformed(evt);
             }
         });
 
-        jTextField2.setText("jTextField2");
+        jLabel2.setText("ID Pegawai");
+
+        jLabel3.setText("Nama Pegawai");
+
+        jLabel4.setText("Username");
+
+        jC_id.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- pilih --" }));
+        jC_id.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jC_idActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Password");
+
+        jLabel6.setText("Konfirmasi Password");
+
+        jB_daftar.setText("Daftar");
+        jB_daftar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_daftarActionPerformed(evt);
+            }
+        });
+
+        jB_kembali.setText("Kembali");
+        jB_kembali.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_kembaliActionPerformed(evt);
+            }
+        });
+
+        jC_pass.setText("show");
+        jC_pass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jC_passActionPerformed(evt);
+            }
+        });
+
+        jC_pass2.setText("show");
+        jC_pass2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jC_pass2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(273, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 122, Short.MAX_VALUE)
+                                .addComponent(jB_daftar, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jB_kembali, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jT_user)
+                                    .addComponent(jT_nama)
+                                    .addComponent(jC_id, 0, 223, Short.MAX_VALUE)
+                                    .addComponent(jP_pass2)
+                                    .addComponent(jP_pass))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jC_pass2, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                            .addComponent(jC_pass, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
-                .addGap(29, 29, 29)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(42, 42, 42)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jC_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jT_nama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jT_user, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jP_pass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(jC_pass))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jP_pass2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(jC_pass2))
                 .addGap(18, 18, 18)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(175, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jB_daftar)
+                    .addComponent(jB_kembali))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void jT_namaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jT_namaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_jT_namaActionPerformed
+
+    private void jC_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jC_idActionPerformed
+        // TODO add your handling code here:
+        GetName();
+
+    }//GEN-LAST:event_jC_idActionPerformed
+
+    private void jC_passActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jC_passActionPerformed
+        // TODO add your handling code here:
+        cekpass();
+    }//GEN-LAST:event_jC_passActionPerformed
+
+    private void jC_pass2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jC_pass2ActionPerformed
+        // TODO add your handling code here:
+        cekpass();
+    }//GEN-LAST:event_jC_pass2ActionPerformed
+
+    private void jB_daftarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_daftarActionPerformed
+        // TODO add your handling code here:
+        Daftar();
+    }//GEN-LAST:event_jB_daftarActionPerformed
+
+    private void jB_kembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_kembaliActionPerformed
+        // TODO add your handling code here:
+        Kembali();
+    }//GEN-LAST:event_jB_kembaliActionPerformed
 
     /**
      * @param args the command line arguments
@@ -110,8 +362,21 @@ public class Regis extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jB_daftar;
+    private javax.swing.JButton jB_kembali;
+    private javax.swing.JComboBox<String> jC_id;
+    private javax.swing.JCheckBox jC_pass;
+    private javax.swing.JCheckBox jC_pass2;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPasswordField jP_pass;
+    private javax.swing.JPasswordField jP_pass2;
+    private javax.swing.JTextField jT_nama;
+    private javax.swing.JTextField jT_user;
     // End of variables declaration//GEN-END:variables
 }
